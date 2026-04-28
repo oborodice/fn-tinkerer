@@ -16,7 +16,7 @@
 </script>
 
 <main>
-  <h1>Math Playground</h1>
+  <h1>Fn Tinkerer</h1>
   <input bind:value={expr} />
   <div bind:this={container}></div>
 </main>
