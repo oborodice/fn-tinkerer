@@ -1,6 +1,10 @@
 <script lang="ts">
   import * as fp from 'function-plot'
+  import { AudioPlayer } from './lib/audio'
   const functionPlot = (fp as any).default?.default ?? (fp as any).default ?? fp
+
+  const player = new AudioPlayer()
+  let playing = $state(false)
 
   let fn = $state('sin')
   let amplitude = $state(1)
@@ -39,6 +43,15 @@
   <label>
     Phase: {(phase >= 0 ? '+' : '') + phase.toFixed(1)}
     <input type="range" min="-6.3" max="6.3" step="0.1" bind:value={phase} />
+  </label>
+  <label>
+    Sound:
+    <button onclick={async () => {
+      if (playing) { player.stop(); playing = false }
+      else { await player.start(); playing = true }
+    }}>
+      {playing ? 'Stop' : 'Play'}
+    </button>
   </label>
   <div bind:this={container}></div>
 </main>
