@@ -1,3 +1,5 @@
+const frac = (x: number) => x - Math.floor(x)
+
 type Waveform = {
   fn: (x: number) => number
   expr: string
@@ -9,6 +11,7 @@ export const waveforms: Record<string, Waveform> = {
   cos: { fn: Math.cos, expr: 'cos(x)', tonal: true },
   tan: { fn: Math.tan, expr: 'tan(x)', tonal: false },
   square: { fn: (x) => Math.sign(Math.sin(x)), expr: 'sgn(sin(x))', tonal: true },
+  sawtooth: { fn: (x) => 2 * frac(x / (2 * Math.PI)) - 1, expr: '2 * frac(x / 2π) - 1', tonal: true },
 }
 
 export function sampleSegments(
