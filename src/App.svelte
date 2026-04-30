@@ -1,6 +1,7 @@
 <script lang="ts">
   import * as fp from 'function-plot'
   import { AudioPlayer } from './lib/audio'
+  import { hzToNoteName } from './lib/music'
   const functionPlot = (fp as any).default?.default ?? (fp as any).default ?? fp
 
   const player = new AudioPlayer()
@@ -14,6 +15,8 @@
   let container: HTMLDivElement
 
   let displayExpr = $derived(`${amplitude} * ${fn}(${frequency} * x + ${phase})`)
+
+  let noteLabel = $derived(fn !== 'tan' ? `${Math.round(frequency * 440)}Hz / ${hzToNoteName(frequency * 440)}` : '')
 
   async function togglePlay() {
     if (playing) {
@@ -60,7 +63,7 @@
     <input type="range" min="-1" max="1" step="0.01" bind:value={amplitude} />
   </label>
   <label>
-    Frequency: {frequency.toFixed(2)} ({Math.round(frequency * 440)}Hz)
+    Frequency: {frequency.toFixed(2)}{noteLabel ? ` (${noteLabel})` : ''}
     <input type="range" min="0" max="100" step="1" bind:value={freqSlider} />
   </label>
   <label>
@@ -77,4 +80,7 @@
 </main>
 
 <style>
+  label {
+    display: block;
+  }
 </style>
