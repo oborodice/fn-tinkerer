@@ -1,19 +1,20 @@
 const frac = (x: number) => x - Math.floor(x)
 
 type Waveform = {
+  name: string
   fn: (x: number) => number
   expr: string
   tonal: boolean
 }
 
 export const waveforms: Record<string, Waveform> = {
-  sin: { fn: Math.sin, expr: 'sin(x)', tonal: true },
-  cos: { fn: Math.cos, expr: 'cos(x)', tonal: true },
-  tan: { fn: Math.tan, expr: 'tan(x)', tonal: false },
-  square: { fn: (x) => Math.sign(Math.sin(x)), expr: 'sgn(sin(x))', tonal: true },
-  sawtooth: { fn: (x) => 2 * frac(x / (2 * Math.PI)) - 1, expr: '2 * frac(x / 2π) - 1', tonal: true },
-  triangle: { fn: (x) => 2 * Math.abs(2 * frac(x / (2 * Math.PI)) - 1) - 1, expr: '2 * |2 * frac(x / 2π) - 1| - 1', tonal: true },
-  absSin: { fn: (x) => Math.abs(Math.sin(x)), expr: '|sin(x)|', tonal: true },
+  sin: { name: 'sin', fn: Math.sin, expr: 'sin(x)', tonal: true },
+  cos: { name: 'cos', fn: Math.cos, expr: 'cos(x)', tonal: true },
+  tan: { name: 'tan', fn: Math.tan, expr: 'tan(x)', tonal: false },
+  square: { name: 'square', fn: (x) => Math.sign(Math.sin(x)), expr: 'sgn(sin(x))', tonal: true },
+  sawtooth: { name: 'sawtooth', fn: (x) => 2 * frac(x / (2 * Math.PI)) - 1, expr: '2 * frac(x / 2π) - 1', tonal: true },
+  triangle: { name: 'triangle', fn: (x) => 2 * Math.abs(2 * frac(x / (2 * Math.PI)) - 1) - 1, expr: '2 * |2 * frac(x / 2π) - 1| - 1', tonal: true },
+  absSin: { name: 'rectified sin', fn: (x) => Math.abs(Math.sin(x)), expr: '|sin(x)|', tonal: true },
 }
 
 export function sampleSegments(

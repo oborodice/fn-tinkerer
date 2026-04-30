@@ -64,7 +64,7 @@
   <h1>Fn Tinkerer</h1>
   <select bind:value={fn}>
     {#each Object.keys(waveforms) as key}
-      <option value={key}>{key}</option>
+      <option value={key}>{waveforms[key].name}</option>
     {/each}
   </select>
   <p>f(x) = {displayExpr}</p>
