@@ -25,6 +25,7 @@
   <select bind:value={fn}>
     <option value="sin">sin</option>
     <option value="cos">cos</option>
+    <option value="tan">tan</option>
   </select>
   <p>f(x) = {displayExpr}</p>
   <label>
