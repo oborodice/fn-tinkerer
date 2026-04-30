@@ -11,8 +11,10 @@
 ## 開発
 
 ```bash
-npm install
-npm run dev
+$ mise trust
+$ mise install
+$ npm install
+$ npm run dev
 ```
 
 ## 技術スタック
