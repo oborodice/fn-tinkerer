@@ -18,9 +18,15 @@
     try {
       functionPlot({
         target: container,
+        xAxis: { domain: [-10, 10] },
+        yAxis: { domain: [-6, 6] },
         data: [{ fn: displayExpr }],
       })
     } catch {}
+  })
+
+  $effect(() => {
+    player.setParams({ amplitude, frequency, phase })
   })
 </script>
 
@@ -34,7 +40,7 @@
   <p>f(x) = {displayExpr}</p>
   <label>
     Amplitude: {(amplitude >= 0 ? '+' : '') + amplitude.toFixed(1)}
-    <input type="range" min="-3" max="3" step="0.1" bind:value={amplitude} />
+    <input type="range" min="-5" max="5" step="0.1" bind:value={amplitude} />
   </label>
   <label>
     Frequency: {(frequency >= 0 ? '+' : '') + frequency.toFixed(1)}

@@ -18,4 +18,12 @@ export class AudioPlayer {
     this.node = null
     this.audioCtx = null
   }
+
+  setParams(params: { amplitude?: number; frequency?: number; phase?: number }): void {
+    if (!this.node) return
+    for (const [key, value] of Object.entries(params) as [string, number][]) {
+      const param = this.node.parameters.get(key)
+      if (param) param.value = value
+    }
+  }
 }
