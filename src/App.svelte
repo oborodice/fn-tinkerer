@@ -14,6 +14,17 @@
 
   let displayExpr = $derived(`${amplitude} * ${fn}(${frequency} * x + ${phase})`)
 
+  async function togglePlay() {
+    if (playing) {
+      player.stop()
+      playing = false
+      return
+    }
+    await player.start()
+    player.setParams({ amplitude, frequency, phase })
+    playing = true
+  }
+
   $effect(() => {
     try {
       functionPlot({
@@ -52,10 +63,7 @@
   </label>
   <label>
     Sound:
-    <button onclick={async () => {
-      if (playing) { player.stop(); playing = false }
-      else { await player.start(); playing = true }
-    }}>
+    <button onclick={togglePlay}>
       {playing ? 'Stop' : 'Play'}
     </button>
   </label>
