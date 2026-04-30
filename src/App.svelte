@@ -2,6 +2,7 @@
   import * as fp from 'function-plot'
   import { AudioPlayer } from './lib/audio'
   import { hzToNoteName } from './lib/music'
+  import { waveforms } from './lib/waveforms'
   const functionPlot = (fp as any).default?.default ?? (fp as any).default ?? fp
 
   const player = new AudioPlayer()
@@ -14,7 +15,9 @@
   let phase = $state(0)
   let container: HTMLDivElement
 
-  let displayExpr = $derived(`${amplitude} * ${fn}(${frequency} * x + ${phase})`)
+  let displayExpr = $derived(
+    `${amplitude} * (${waveforms[fn].expr.replace(/\bx\b/g, `(${frequency} * x + ${phase})`)})`
+  )
 
   let noteLabel = $derived(fn !== 'tan' ? `${Math.round(frequency * 440)}Hz / ${hzToNoteName(frequency * 440)}` : '')
 
@@ -53,9 +56,9 @@
 <main>
   <h1>Fn Tinkerer</h1>
   <select bind:value={fn}>
-    <option value="sin">sin</option>
-    <option value="cos">cos</option>
-    <option value="tan">tan</option>
+    {#each Object.keys(waveforms) as key}
+      <option value={key}>{key}</option>
+    {/each}
   </select>
   <p>f(x) = {displayExpr}</p>
   <label>

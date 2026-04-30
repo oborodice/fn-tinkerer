@@ -1,3 +1,5 @@
+import { waveforms } from '../waveforms'
+
 declare const sampleRate: number
 declare abstract class AudioWorkletProcessor {
   readonly port: MessagePort
@@ -12,8 +14,8 @@ class WaveProcessor extends AudioWorkletProcessor {
   constructor() {
     super()
     this.port.onmessage = (e) => {
-      const f = Math[e.data.fn as keyof Math]
-      if (typeof f === 'function') this.fn = f as (x: number) => number
+      const waveform = waveforms[e.data.fn]
+      if (waveform) this.fn = waveform.fn
     }
   }
 
