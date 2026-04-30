@@ -2,14 +2,17 @@
   import * as fp from 'function-plot'
   const functionPlot = (fp as any).default?.default ?? (fp as any).default ?? fp
 
-  let expr = $state('sin(x)')
+  let fn = $state('sin')
+  let amplitude = $state(1)
   let container: HTMLDivElement
+
+  let displayExpr = $derived(`${amplitude} * ${fn}(x)`)
 
   $effect(() => {
     try {
       functionPlot({
         target: container,
-        data: [{ fn: expr }],
+        data: [{ fn: displayExpr }],
       })
     } catch {}
   })
@@ -17,7 +20,14 @@
 
 <main>
   <h1>Fn Tinkerer</h1>
-  <input bind:value={expr} />
+  <select bind:value={fn}>
+    <option value="sin">sin</option>
+  </select>
+  <p>f(x) = {displayExpr}</p>
+  <label>
+    Amplitude: {(amplitude >= 0 ? '+' : '') + amplitude.toFixed(1)}
+    <input type="range" min="-3" max="3" step="0.1" bind:value={amplitude} />
+  </label>
   <div bind:this={container}></div>
 </main>
 
