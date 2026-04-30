@@ -1,11 +1,21 @@
 declare const sampleRate: number
 declare abstract class AudioWorkletProcessor {
+  readonly port: MessagePort
   process(inputs: Float32Array[][], outputs: Float32Array[][], parameters: Record<string, Float32Array>): boolean
 }
 declare function registerProcessor(name: string, ctor: new () => AudioWorkletProcessor): void
 
-class SineProcessor extends AudioWorkletProcessor {
+class WaveProcessor extends AudioWorkletProcessor {
   private phase = 0
+  private fn: (x: number) => number = Math.sin
+
+  constructor() {
+    super()
+    this.port.onmessage = (e) => {
+      const f = Math[e.data.fn as keyof Math]
+      if (typeof f === 'function') this.fn = f as (x: number) => number
+    }
+  }
 
   static get parameterDescriptors() {
     return [
@@ -23,7 +33,7 @@ class SineProcessor extends AudioWorkletProcessor {
     const increment = (2 * Math.PI * frequency * 440) / sampleRate
 
     for (let i = 0; i < output.length; i++) {
-      output[i] = amplitude * Math.sin(this.phase + phaseOffset)
+      output[i] = amplitude * this.fn(this.phase + phaseOffset)
       this.phase += increment
       if (this.phase > 2 * Math.PI) this.phase -= 2 * Math.PI
     }
@@ -32,4 +42,4 @@ class SineProcessor extends AudioWorkletProcessor {
   }
 }
 
-registerProcessor('sine-processor', SineProcessor)
+registerProcessor('wave-processor', WaveProcessor)

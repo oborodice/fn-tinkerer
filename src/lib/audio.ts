@@ -1,4 +1,4 @@
-import processorUrl from './worklets/sine-processor.ts?worker&url'
+import processorUrl from './worklets/wave-processor.ts?worker&url'
 
 export class AudioPlayer {
   private audioCtx: AudioContext | null = null
@@ -8,7 +8,7 @@ export class AudioPlayer {
     if (this.audioCtx) return
     this.audioCtx = new AudioContext()
     await this.audioCtx.audioWorklet.addModule(processorUrl)
-    this.node = new AudioWorkletNode(this.audioCtx, 'sine-processor')
+    this.node = new AudioWorkletNode(this.audioCtx, 'wave-processor')
     this.node.connect(this.audioCtx.destination)
   }
 
@@ -19,7 +19,11 @@ export class AudioPlayer {
     this.audioCtx = null
   }
 
-  setParams(params: { amplitude?: number; frequency?: number; phase?: number }): void {
+  setWaveform(fn: string): void {
+    this.node?.port.postMessage({ fn })
+  }
+
+  tune(params: { amplitude?: number; frequency?: number; phase?: number }): void {
     if (!this.node) return
     for (const [key, value] of Object.entries(params) as [string, number][]) {
       const param = this.node.parameters.get(key)

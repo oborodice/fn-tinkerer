@@ -22,7 +22,8 @@
       return
     }
     await player.start()
-    player.setParams({ amplitude, frequency, phase })
+    player.setWaveform(fn)
+    player.tune({ amplitude, frequency, phase })
     playing = true
   }
 
@@ -38,7 +39,11 @@
   })
 
   $effect(() => {
-    player.setParams({ amplitude, frequency, phase })
+    player.tune({ amplitude, frequency, phase })
+  })
+
+  $effect(() => {
+    player.setWaveform(fn)
   })
 </script>
 
