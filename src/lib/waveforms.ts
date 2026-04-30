@@ -12,6 +12,7 @@ export const waveforms: Record<string, Waveform> = {
   tan: { fn: Math.tan, expr: 'tan(x)', tonal: false },
   square: { fn: (x) => Math.sign(Math.sin(x)), expr: 'sgn(sin(x))', tonal: true },
   sawtooth: { fn: (x) => 2 * frac(x / (2 * Math.PI)) - 1, expr: '2 * frac(x / 2π) - 1', tonal: true },
+  triangle: { fn: (x) => 2 * Math.abs(2 * frac(x / (2 * Math.PI)) - 1) - 1, expr: '2 * |2 * frac(x / 2π) - 1| - 1', tonal: true },
 }
 
 export function sampleSegments(
