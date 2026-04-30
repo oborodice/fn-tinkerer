@@ -2,7 +2,7 @@
   import * as fp from 'function-plot'
   import { AudioPlayer } from './lib/audio'
   import { hzToNoteName } from './lib/music'
-  import { waveforms } from './lib/waveforms'
+  import { waveforms, samplePoints } from './lib/waveforms'
   const functionPlot = (fp as any).default?.default ?? (fp as any).default ?? fp
 
   const player = new AudioPlayer()
@@ -34,14 +34,13 @@
   }
 
   $effect(() => {
-    try {
-      functionPlot({
-        target: container,
-        xAxis: { domain: [-10, 10] },
-        yAxis: { domain: [-2, 2] },
-        data: [{ fn: displayExpr }],
-      })
-    } catch {}
+    const points = samplePoints(waveforms[fn].fn, amplitude, frequency, phase)
+    functionPlot({
+      target: container,
+      xAxis: { domain: [-10, 10] },
+      yAxis: { domain: [-2, 2] },
+      data: [{ points, fnType: 'points', graphType: 'polyline' }],
+    })
   })
 
   $effect(() => {
