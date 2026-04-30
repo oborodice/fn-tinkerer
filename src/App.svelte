@@ -4,9 +4,10 @@
 
   let fn = $state('sin')
   let amplitude = $state(1)
+  let frequency = $state(1)
   let container: HTMLDivElement
 
-  let displayExpr = $derived(`${amplitude} * ${fn}(x)`)
+  let displayExpr = $derived(`${amplitude} * ${fn}(${frequency} * x)`)
 
   $effect(() => {
     try {
@@ -27,6 +28,10 @@
   <label>
     Amplitude: {(amplitude >= 0 ? '+' : '') + amplitude.toFixed(1)}
     <input type="range" min="-3" max="3" step="0.1" bind:value={amplitude} />
+  </label>
+  <label>
+    Frequency: {(frequency >= 0 ? '+' : '') + frequency.toFixed(1)}
+    <input type="range" min="-5" max="5" step="0.1" bind:value={frequency} />
   </label>
   <div bind:this={container}></div>
 </main>
