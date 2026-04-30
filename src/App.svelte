@@ -16,10 +16,10 @@
   let container: HTMLDivElement
 
   let displayExpr = $derived(
-    `${amplitude} * (${waveforms[fn].expr.replace(/\bx\b/g, `(${frequency} * x + ${phase})`)})`
+    `${amplitude.toFixed(2)} * (${waveforms[fn].expr.replace(/\bx\b/g, `(${frequency.toFixed(2)} * x + ${phase.toFixed(1)})`)})`
   )
 
-  let noteLabel = $derived(fn !== 'tan' ? `${Math.round(frequency * 440)}Hz / ${hzToNoteName(frequency * 440)}` : '')
+  let noteLabel = $derived(waveforms[fn].tonal ? `${Math.round(frequency * 440)}Hz / ${hzToNoteName(frequency * 440)}` : '')
 
   async function togglePlay() {
     if (playing) {
