@@ -60,7 +60,7 @@
     <input type="range" min="-1" max="1" step="0.01" bind:value={amplitude} />
   </label>
   <label>
-    Frequency: {frequency.toFixed(2)}
+    Frequency: {frequency.toFixed(2)} ({Math.round(frequency * 440)}Hz)
     <input type="range" min="0" max="100" step="1" bind:value={freqSlider} />
   </label>
   <label>
