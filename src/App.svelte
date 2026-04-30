@@ -8,7 +8,8 @@
 
   let fn = $state('sin')
   let amplitude = $state(1)
-  let frequency = $state(1)
+  let freqSlider = $state(50)
+  let frequency = $derived(0.25 * Math.pow(16, freqSlider / 100))
   let phase = $state(0)
   let container: HTMLDivElement
 
@@ -30,7 +31,7 @@
       functionPlot({
         target: container,
         xAxis: { domain: [-10, 10] },
-        yAxis: { domain: [-6, 6] },
+        yAxis: { domain: [-2, 2] },
         data: [{ fn: displayExpr }],
       })
     } catch {}
@@ -54,8 +55,8 @@
     <input type="range" min="-1" max="1" step="0.01" bind:value={amplitude} />
   </label>
   <label>
-    Frequency: {(frequency >= 0 ? '+' : '') + frequency.toFixed(1)}
-    <input type="range" min="-5" max="5" step="0.1" bind:value={frequency} />
+    Frequency: {frequency.toFixed(2)}
+    <input type="range" min="0" max="100" step="1" bind:value={freqSlider} />
   </label>
   <label>
     Phase: {(phase >= 0 ? '+' : '') + phase.toFixed(1)}
