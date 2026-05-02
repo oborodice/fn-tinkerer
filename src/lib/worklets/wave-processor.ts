@@ -37,7 +37,6 @@ class WaveProcessor extends AudioWorkletProcessor {
     for (let i = 0; i < output.length; i++) {
       output[i] = amplitude * this.fn(this.phase + phaseOffset)
       this.phase += increment
-      if (this.phase > 2 * Math.PI) this.phase -= 2 * Math.PI
     }
 
     return true
