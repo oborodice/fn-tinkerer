@@ -16,6 +16,7 @@ export const waveforms: Record<string, Waveform> = {
   triangle: { name: 'triangle', fn: (x) => 2 * Math.abs(2 * frac(x / (2 * Math.PI)) - 1) - 1, expr: '2 * |2 * frac(x / 2π) - 1| - 1', tonal: true },
   absSin: { name: 'rectified sin', fn: (x) => Math.abs(Math.sin(x)), expr: '|sin(x)|', tonal: true },
   sinc: { name: 'sinc', fn: (x) => x === 0 ? 1 : Math.sin(x) / x, expr: 'sin(x) / x', tonal: false },
+  sinc2: { name: 'sinc²', fn: (x) => (x === 0 ? 1 : Math.sin(x) / x) ** 2, expr: '(sin(x) / x)²', tonal: false },
 }
 
 export function sampleSegments(
