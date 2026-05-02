@@ -20,6 +20,7 @@ export const waveforms: Record<string, Waveform> = {
   chirp: { name: 'chirp', fn: (x) => Math.sin(x * x), expr: 'sin(x²)', tonal: false },
   octave: { name: 'octave', fn: (x) => Math.sin(x) + Math.sin(2 * x), expr: 'sin(x) + sin(2x)', tonal: false },
   majorChord: { name: 'major chord', fn: (x) => Math.sin(4 * x) + Math.sin(5 * x) + Math.sin(6 * x), expr: 'sin(4x) + sin(5x) + sin(6x)', tonal: false },
+  topologistsSin: { name: "topologist's sin", fn: (x) => x === 0 ? 0 : Math.sin(1 / x), expr: 'sin(1/x)', tonal: false },
 }
 
 export function sampleSegments(
