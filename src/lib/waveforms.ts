@@ -18,6 +18,7 @@ export const waveforms: Record<string, Waveform> = {
   sinc: { name: 'sinc', fn: (x) => x === 0 ? 1 : Math.sin(x) / x, expr: 'sin(x) / x', tonal: false },
   sinc2: { name: 'sinc²', fn: (x) => (x === 0 ? 1 : Math.sin(x) / x) ** 2, expr: '(sin(x) / x)²', tonal: false },
   chirp: { name: 'chirp', fn: (x) => Math.sin(x * x), expr: 'sin(x²)', tonal: false },
+  octave: { name: 'octave', fn: (x) => Math.sin(x) + Math.sin(2 * x), expr: 'sin(x) + sin(2x)', tonal: true },
 }
 
 export function sampleSegments(
