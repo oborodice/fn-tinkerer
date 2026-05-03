@@ -75,7 +75,7 @@
     <input type="range" min="-1" max="1" step="0.01" bind:value={amplitude} />
   </label>
   <label>
-    Frequency: {frequency.toFixed(2)}<span class="note-label">{noteLabel ? ` (${noteLabel})` : ''}</span>
+    Frequency: {frequency.toFixed(2)}{#if noteLabel}<span class="note-label"> ({noteLabel})</span>{/if}
     <input type="range" min="0" max="100" step="1" bind:value={freqSlider} />
   </label>
   <label>
