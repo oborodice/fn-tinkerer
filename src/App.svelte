@@ -9,6 +9,8 @@
   let playing = $state(false)
 
   let fn = $state('sin')
+  let terms = $state(1)
+  let activeFn = $derived((x: number) => waveforms[fn].fn(x, { terms }))
   const defaultParams = { amplitude: 1, freqSlider: 50, phase: 0 }
   let amplitude = $state(defaultParams.amplitude)
   let freqSlider = $state(defaultParams.freqSlider)
@@ -17,7 +19,7 @@
   let container: HTMLDivElement
 
   let displayExpr = $derived(
-    `${amplitude.toFixed(2)} * (${waveforms[fn].expr.replace(/\bx\b/g, `(${frequency.toFixed(2)} * x + ${phase.toFixed(1)})`)})`
+    `${amplitude.toFixed(2)} * (${waveforms[fn].expr(`${frequency.toFixed(2)} * x + ${phase.toFixed(1)}`, { terms })})`
   )
 
   let noteLabel = $derived(waveforms[fn].tonal ? `${Math.round(frequency * 440)}Hz / ${hzToNoteName(frequency * 440)}` : '')
@@ -41,7 +43,7 @@
   }
 
   $effect(() => {
-    const segments = sampleSegments(waveforms[fn].fn, amplitude, frequency, phase)
+    const segments = sampleSegments(activeFn, amplitude, frequency, phase)
     functionPlot({
       target: container,
       xAxis: { domain: [-10, 10] },
@@ -80,6 +82,12 @@
     Phase: {(phase >= 0 ? '+' : '') + phase.toFixed(1)}
     <input type="range" min="-6.3" max="6.3" step="0.1" bind:value={phase} />
   </label>
+  {#if fn === 'maclaurinSin'}
+  <label>
+    Terms: {terms}
+    <input type="range" min="1" max="10" step="1" bind:value={terms} />
+  </label>
+  {/if}
   <button onclick={resetParams}>Reset</button>
   <label>
     Sound:

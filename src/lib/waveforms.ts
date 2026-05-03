@@ -1,27 +1,100 @@
 const frac = (x: number) => x - Math.floor(x)
 
+const factorial = (n: number) => {
+  let result = 1
+  for (let i = 2; i <= n; i++) result *= i
+  return result
+}
+
 type Waveform = {
   name: string
-  fn: (x: number) => number
-  expr: string
+  fn: (x: number, params?: Record<string, number>) => number
+  expr: (x: string, params?: Record<string, number>) => string
   tonal: boolean
 }
 
 export const waveforms: Record<string, Waveform> = {
-  sin: { name: 'sin', fn: Math.sin, expr: 'sin(x)', tonal: true },
-  cos: { name: 'cos', fn: Math.cos, expr: 'cos(x)', tonal: true },
-  tan: { name: 'tan', fn: Math.tan, expr: 'tan(x)', tonal: false },
-  square: { name: 'square', fn: (x) => Math.sign(Math.sin(x)), expr: 'sgn(sin(x))', tonal: true },
-  sawtooth: { name: 'sawtooth', fn: (x) => 2 * frac(x / (2 * Math.PI)) - 1, expr: '2 * frac(x / 2π) - 1', tonal: true },
-  triangle: { name: 'triangle', fn: (x) => 2 * Math.abs(2 * frac(x / (2 * Math.PI)) - 1) - 1, expr: '2 * |2 * frac(x / 2π) - 1| - 1', tonal: true },
-  absSin: { name: 'rectified sin', fn: (x) => Math.abs(Math.sin(x)), expr: '|sin(x)|', tonal: true },
-  sinc: { name: 'sinc', fn: (x) => x === 0 ? 1 : Math.sin(x) / x, expr: 'sin(x) / x', tonal: false },
-  sinc2: { name: 'sinc²', fn: (x) => (x === 0 ? 1 : Math.sin(x) / x) ** 2, expr: '(sin(x) / x)²', tonal: false },
-  chirp: { name: 'chirp', fn: (x) => Math.sin(x * x), expr: 'sin(x²)', tonal: false },
-  octave: { name: 'octave', fn: (x) => Math.sin(x) + Math.sin(2 * x), expr: 'sin(x) + sin(2x)', tonal: false },
-  majorChord: { name: 'major chord', fn: (x) => Math.sin(4 * x) + Math.sin(5 * x) + Math.sin(6 * x), expr: 'sin(4x) + sin(5x) + sin(6x)', tonal: false },
-  topologistsSin: { name: "topologist's sin", fn: (x) => x === 0 ? 0 : Math.sin(1 / x), expr: 'sin(1/x)', tonal: false },
-  morletWavelet: { name: 'morlet wavelet', fn: (x) => Math.exp(-x * x / 2) * Math.sin(x), expr: 'e^(-x²/2) * sin(x)', tonal: false },
+  sin: { name: 'sin', fn: Math.sin, expr: (x) => `sin(${x})`, tonal: true },
+  cos: { name: 'cos', fn: Math.cos, expr: (x) => `cos(${x})`, tonal: true },
+  tan: { name: 'tan', fn: Math.tan, expr: (x) => `tan(${x})`, tonal: false },
+  square: {
+    name: 'square',
+    fn: (x) => Math.sign(Math.sin(x)),
+    expr: (x) => `sgn(sin(${x}))`,
+    tonal: true,
+  },
+  sawtooth: {
+    name: 'sawtooth',
+    fn: (x) => 2 * frac(x / (2 * Math.PI)) - 1,
+    expr: (x) => `2 * frac(${x} / 2π) - 1`,
+    tonal: true,
+  },
+  triangle: {
+    name: 'triangle',
+    fn: (x) => 2 * Math.abs(2 * frac(x / (2 * Math.PI)) - 1) - 1,
+    expr: (x) => `2 * |2 * frac(${x} / 2π) - 1| - 1`,
+    tonal: true,
+  },
+  absSin: {
+    name: 'rectified sin',
+    fn: (x) => Math.abs(Math.sin(x)),
+    expr: (x) => `|sin(${x})|`,
+    tonal: true,
+  },
+  sinc: {
+    name: 'sinc',
+    fn: (x) => x === 0 ? 1 : Math.sin(x) / x,
+    expr: (x) => `sin(${x}) / ${x}`,
+    tonal: false,
+  },
+  sinc2: {
+    name: 'sinc²',
+    fn: (x) => (x === 0 ? 1 : Math.sin(x) / x) ** 2,
+    expr: (x) => `(sin(${x}) / ${x})²`,
+    tonal: false,
+  },
+  chirp: {
+    name: 'chirp',
+    fn: (x) => Math.sin(x * x),
+    expr: (x) => `sin((${x})²)`,
+    tonal: false,
+  },
+  octave: {
+    name: 'octave',
+    fn: (x) => Math.sin(x) + Math.sin(2 * x),
+    expr: (x) => `sin(${x}) + sin(2(${x}))`,
+    tonal: false,
+  },
+  majorChord: {
+    name: 'major chord',
+    fn: (x) => Math.sin(4 * x) + Math.sin(5 * x) + Math.sin(6 * x),
+    expr: (x) => `sin(4(${x})) + sin(5(${x})) + sin(6(${x}))`,
+    tonal: false,
+  },
+  topologistsSin: {
+    name: "topologist's sin",
+    fn: (x) => x === 0 ? 0 : Math.sin(1 / x),
+    expr: (x) => `sin(1/(${x}))`,
+    tonal: false,
+  },
+  morletWavelet: {
+    name: 'morlet wavelet',
+    fn: (x) => Math.exp(-x * x / 2) * Math.sin(x),
+    expr: (x) => `e^(-(${x})²/2) * sin(${x})`,
+    tonal: false,
+  },
+  maclaurinSin: {
+    name: 'maclaurin sin',
+    fn: (x, params) => {
+      let sum = 0
+      for (let n = 0; n < params!.terms; n++) {
+        sum += ((-1) ** n * x ** (2 * n + 1)) / factorial(2 * n + 1)
+      }
+      return sum
+    },
+    expr: (x, params) => `Σ [n=0..${params!.terms - 1}] (-1)ⁿ (${x})²ⁿ⁺¹/(2n+1)!`,
+    tonal: false,
+  },
 }
 
 export function sampleSegments(
