@@ -53,12 +53,6 @@ export const waveforms: Record<string, Waveform> = {
     expr: (x) => `(sin(${x}) / ${x})²`,
     tonal: false,
   },
-  chirp: {
-    name: 'chirp',
-    fn: (x) => Math.sin(x * x),
-    expr: (x) => `sin((${x})²)`,
-    tonal: false,
-  },
   octave: {
     name: 'octave',
     fn: (x) => Math.sin(x) + Math.sin(2 * x),
@@ -69,6 +63,12 @@ export const waveforms: Record<string, Waveform> = {
     name: 'major chord',
     fn: (x) => Math.sin(4 * x) + Math.sin(5 * x) + Math.sin(6 * x),
     expr: (x) => `sin(4(${x})) + sin(5(${x})) + sin(6(${x}))`,
+    tonal: false,
+  },
+  chirp: {
+    name: 'chirp',
+    fn: (x) => Math.sin(x * x),
+    expr: (x) => `sin((${x})²)`,
     tonal: false,
   },
   topologistsSin: {
