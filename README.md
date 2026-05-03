@@ -1,4 +1,4 @@
-# Fn Tinkerer
+# Wave Surfer
 
 - 数学関数をインタラクティブにグラフ描画・音声再生できるWebアプリ
 

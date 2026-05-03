@@ -63,7 +63,7 @@
 </script>
 
 <main>
-  <h1>Fn Tinkerer</h1>
+  <h1>Wave Surfer</h1>
   <select bind:value={fn}>
     {#each Object.keys(waveforms) as key}
       <option value={key}>{waveforms[key].name}</option>
