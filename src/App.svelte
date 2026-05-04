@@ -17,10 +17,7 @@
   let terms = $state(defaultParams.terms)
   let container: HTMLDivElement
 
-  let displayExpr = $derived(
-    `${amplitude.toFixed(2)} * (${waveforms[fn].expr(`${frequency.toFixed(2)} * x + ${phase.toFixed(1)}`, { terms })})`
-  )
-
+  let displayExpr = $derived(waveforms[fn].expr(amplitude, frequency, phase, { terms }))
   let noteLabel = $derived(waveforms[fn].tonal ? `${Math.round(frequency * 440)}Hz / ${hzToNoteName(frequency * 440)}` : '')
 
   function resetParams() {
