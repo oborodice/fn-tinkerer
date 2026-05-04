@@ -2,13 +2,13 @@
   import * as fp from 'function-plot'
   import { AudioPlayer } from './lib/audio'
   import { hzToNoteName } from './lib/music'
-  import { waveforms, sampleSegments } from './lib/waveforms'
+  import { waveforms, sampleSegments, type WaveParams } from './lib/waveforms'
   const functionPlot = (fp as any).default?.default ?? (fp as any).default ?? fp
 
   const player = new AudioPlayer()
   const defaultParams = { amplitude: 1, freqSlider: 50, phase: 0, terms: 1 }
 
-  let fn = $state('sin')
+  let selectedWaveform = $state('sin')
   let playing = $state(false)
   let amplitude = $state(defaultParams.amplitude)
   let freqSlider = $state(defaultParams.freqSlider)
@@ -17,8 +17,9 @@
   let terms = $state(defaultParams.terms)
   let container: HTMLDivElement
 
-  let displayExpr = $derived(waveforms[fn].concreteExpr(amplitude, frequency, phase, { terms }))
-  let noteLabel = $derived(waveforms[fn].tonal ? `${Math.round(frequency * 440)}Hz / ${hzToNoteName(frequency * 440)}` : '')
+  let waveParams = $derived<WaveParams>({ amplitude, frequency, phase, options: { terms } })
+  let displayExpr = $derived(waveforms[selectedWaveform].concreteExpr(waveParams))
+  let noteLabel = $derived(waveforms[selectedWaveform].tonal ? `${Math.round(frequency * 440)}Hz / ${hzToNoteName(frequency * 440)}` : '')
 
   function resetParams() {
     amplitude = defaultParams.amplitude
@@ -34,13 +35,13 @@
       return
     }
     await player.start()
-    player.setWaveform(fn)
+    player.setWaveform(selectedWaveform)
     player.tune({ amplitude, frequency, phase })
     playing = true
   }
 
   $effect(() => {
-    const segments = sampleSegments((x) => waveforms[fn].fn(x, { terms }), amplitude, frequency, phase)
+    const segments = sampleSegments(waveforms[selectedWaveform], waveParams)
     functionPlot({
       target: container,
       xAxis: { domain: [-10, 10] },
@@ -55,13 +56,13 @@
   })
 
   $effect(() => {
-    player.setWaveform(fn)
+    player.setWaveform(selectedWaveform)
   })
 </script>
 
 <main>
   <h1>Wave Surfer</h1>
-  <select bind:value={fn}>
+  <select bind:value={selectedWaveform}>
     {#each Object.keys(waveforms) as key}
       <option value={key}>{waveforms[key].name}: {waveforms[key].expr}</option>
     {/each}
@@ -79,7 +80,7 @@
     Phase: {(phase >= 0 ? '+' : '') + phase.toFixed(1)}
     <input type="range" min="-6.3" max="6.3" step="0.1" bind:value={phase} />
   </label>
-  {#if fn === 'maclaurinSin'}
+  {#if selectedWaveform === 'maclaurinSin'}
   <label>
     Terms: {terms}
     <input type="range" min="1" max="10" step="1" bind:value={terms} />
