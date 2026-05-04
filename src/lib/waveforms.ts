@@ -9,84 +9,134 @@ const factorial = (n: number) => {
 type Waveform = {
   name: string
   fn: (x: number, params?: Record<string, number>) => number
-  expr: (amplitude: number, frequency: number, phase: number, params?: Record<string, number>) => string
+  expr: string
+  concreteExpr: (amplitude: number, frequency: number, phase: number, params?: Record<string, number>) => string
   tonal: boolean
 }
 
-const fx = (f: number, p: number) => `${f.toFixed(2)} * x + ${p.toFixed(1)}`
-const wrap = (a: number, inner: string) => `${a.toFixed(2)} * (${inner})`
+const buildExpr = (amplitude: number, frequency: number, phase: number, template: (x: string) => string) => {
+  const x = `${frequency.toFixed(2)} * x + ${phase.toFixed(1)}`
+  return `${amplitude.toFixed(2)} * (${template(x)})`
+}
 
 export const waveforms: Record<string, Waveform> = {
-  sin: { name: 'sin', fn: Math.sin, expr: (a, f, p) => wrap(a, `sin(${fx(f, p)})`), tonal: true },
-  cos: { name: 'cos', fn: Math.cos, expr: (a, f, p) => wrap(a, `cos(${fx(f, p)})`), tonal: true },
-  tan: { name: 'tan', fn: Math.tan, expr: (a, f, p) => wrap(a, `tan(${fx(f, p)})`), tonal: false },
-  sec: { name: 'sec', fn: (x) => 1 / Math.cos(x), expr: (a, f, p) => wrap(a, `1/cos(${fx(f, p)})`), tonal: false },
-  csc: { name: 'csc', fn: (x) => 1 / Math.sin(x), expr: (a, f, p) => wrap(a, `1/sin(${fx(f, p)})`), tonal: false },
-  cot: { name: 'cot', fn: (x) => 1 / Math.tan(x), expr: (a, f, p) => wrap(a, `1/tan(${fx(f, p)})`), tonal: false },
+  sin: {
+    name: 'sin',
+    fn: Math.sin,
+    expr: 'sin(x)',
+    concreteExpr: (amplitude, frequency, phase) => buildExpr(amplitude, frequency, phase, x => `sin(${x})`),
+    tonal: true,
+  },
+  cos: {
+    name: 'cos',
+    fn: Math.cos,
+    expr: 'cos(x)',
+    concreteExpr: (amplitude, frequency, phase) => buildExpr(amplitude, frequency, phase, x => `cos(${x})`),
+    tonal: true,
+  },
+  tan: {
+    name: 'tan',
+    fn: Math.tan,
+    expr: 'tan(x)',
+    concreteExpr: (amplitude, frequency, phase) => buildExpr(amplitude, frequency, phase, x => `tan(${x})`),
+    tonal: false,
+  },
+  sec: {
+    name: 'sec',
+    fn: (x) => 1 / Math.cos(x),
+    expr: '1/cos(x)',
+    concreteExpr: (amplitude, frequency, phase) => buildExpr(amplitude, frequency, phase, x => `1/cos(${x})`),
+    tonal: false,
+  },
+  csc: {
+    name: 'csc',
+    fn: (x) => 1 / Math.sin(x),
+    expr: '1/sin(x)',
+    concreteExpr: (amplitude, frequency, phase) => buildExpr(amplitude, frequency, phase, x => `1/sin(${x})`),
+    tonal: false,
+  },
+  cot: {
+    name: 'cot',
+    fn: (x) => 1 / Math.tan(x),
+    expr: '1/tan(x)',
+    concreteExpr: (amplitude, frequency, phase) => buildExpr(amplitude, frequency, phase, x => `1/tan(${x})`),
+    tonal: false,
+  },
   square: {
     name: 'square',
     fn: (x) => Math.sign(Math.sin(x)),
-    expr: (a, f, p) => wrap(a, `sgn(sin(${fx(f, p)}))`),
+    expr: 'sgn(sin(x))',
+    concreteExpr: (amplitude, frequency, phase) => buildExpr(amplitude, frequency, phase, x => `sgn(sin(${x}))`),
     tonal: true,
   },
   sawtooth: {
     name: 'sawtooth',
     fn: (x) => 2 * frac(x / (2 * Math.PI)) - 1,
-    expr: (a, f, p) => wrap(a, `2 * frac(${fx(f, p)} / 2π) - 1`),
+    expr: '2 * frac(x / 2π) - 1',
+    concreteExpr: (amplitude, frequency, phase) => buildExpr(amplitude, frequency, phase, x => `2 * frac(${x} / 2π) - 1`),
     tonal: true,
   },
   triangle: {
     name: 'triangle',
     fn: (x) => 2 * Math.abs(2 * frac(x / (2 * Math.PI)) - 1) - 1,
-    expr: (a, f, p) => wrap(a, `2 * |2 * frac(${fx(f, p)} / 2π) - 1| - 1`),
+    expr: '2 * |2 * frac(x / 2π) - 1| - 1',
+    concreteExpr: (amplitude, frequency, phase) => buildExpr(amplitude, frequency, phase, x => `2 * |2 * frac(${x} / 2π) - 1| - 1`),
     tonal: true,
   },
   absSin: {
     name: 'rectified sin',
     fn: (x) => Math.abs(Math.sin(x)),
-    expr: (a, f, p) => wrap(a, `|sin(${fx(f, p)})|`),
+    expr: '|sin(x)|',
+    concreteExpr: (amplitude, frequency, phase) => buildExpr(amplitude, frequency, phase, x => `|sin(${x})|`),
     tonal: true,
   },
   sinc: {
     name: 'sinc',
     fn: (x) => x === 0 ? 1 : Math.sin(x) / x,
-    expr: (a, f, p) => wrap(a, `sin(${fx(f, p)}) / (${fx(f, p)})`),
+    expr: 'sin(x) / x',
+    concreteExpr: (amplitude, frequency, phase) => buildExpr(amplitude, frequency, phase, x => `sin(${x}) / (${x})`),
     tonal: false,
   },
   sinc2: {
     name: 'sinc²',
     fn: (x) => (x === 0 ? 1 : Math.sin(x) / x) ** 2,
-    expr: (a, f, p) => wrap(a, `(sin(${fx(f, p)}) / (${fx(f, p)}))²`),
+    expr: '(sin(x) / x)²',
+    concreteExpr: (amplitude, frequency, phase) => buildExpr(amplitude, frequency, phase, x => `(sin(${x}) / (${x}))²`),
     tonal: false,
   },
   octave: {
     name: 'octave',
     fn: (x) => Math.sin(x) + Math.sin(2 * x),
-    expr: (a, f, p) => wrap(a, `sin(${fx(f, p)}) + sin(2(${fx(f, p)}))`),
+    expr: 'sin(x) + sin(2x)',
+    concreteExpr: (amplitude, frequency, phase) => buildExpr(amplitude, frequency, phase, x => `sin(${x}) + sin(2(${x}))`),
     tonal: false,
   },
   majorChord: {
     name: 'major chord',
     fn: (x) => Math.sin(4 * x) + Math.sin(5 * x) + Math.sin(6 * x),
-    expr: (a, f, p) => wrap(a, `sin(4(${fx(f, p)})) + sin(5(${fx(f, p)})) + sin(6(${fx(f, p)}))`),
+    expr: 'sin(4x) + sin(5x) + sin(6x)',
+    concreteExpr: (amplitude, frequency, phase) => buildExpr(amplitude, frequency, phase, x => `sin(4(${x})) + sin(5(${x})) + sin(6(${x}))`),
     tonal: false,
   },
   chirp: {
     name: 'chirp',
     fn: (x) => Math.sin(x * x),
-    expr: (a, f, p) => wrap(a, `sin((${fx(f, p)})²)`),
+    expr: 'sin(x²)',
+    concreteExpr: (amplitude, frequency, phase) => buildExpr(amplitude, frequency, phase, x => `sin((${x})²)`),
     tonal: false,
   },
   topologistsSin: {
     name: "topologist's sin",
     fn: (x) => x === 0 ? 0 : Math.sin(1 / x),
-    expr: (a, f, p) => wrap(a, `sin(1/(${fx(f, p)}))`),
+    expr: 'sin(1/x)',
+    concreteExpr: (amplitude, frequency, phase) => buildExpr(amplitude, frequency, phase, x => `sin(1/(${x}))`),
     tonal: false,
   },
   morletWavelet: {
     name: 'morlet wavelet',
     fn: (x) => Math.exp(-x * x / 2) * Math.sin(x),
-    expr: (a, f, p) => wrap(a, `e^(-(${fx(f, p)})²/2) * sin(${fx(f, p)})`),
+    expr: 'e^(-x²/2) * sin(x)',
+    concreteExpr: (amplitude, frequency, phase) => buildExpr(amplitude, frequency, phase, x => `e^(-(${x})²/2) * sin(${x})`),
     tonal: false,
   },
   maclaurinSin: {
@@ -98,7 +148,8 @@ export const waveforms: Record<string, Waveform> = {
       }
       return sum
     },
-    expr: (a, f, p, params) => wrap(a, `Σ [n=0..${params!.terms - 1}] (-1)ⁿ (${fx(f, p)})²ⁿ⁺¹/(2n+1)!`),
+    expr: 'Σ(n=0 to ∞) (-1)ⁿ x²ⁿ⁺¹/(2n+1)!',
+    concreteExpr: (amplitude, frequency, phase, params) => buildExpr(amplitude, frequency, phase, x => `Σ [n=0..${params!.terms - 1}] (-1)ⁿ (${x})²ⁿ⁺¹/(2n+1)!`),
     tonal: false,
   },
 }

@@ -17,7 +17,7 @@
   let terms = $state(defaultParams.terms)
   let container: HTMLDivElement
 
-  let displayExpr = $derived(waveforms[fn].expr(amplitude, frequency, phase, { terms }))
+  let displayExpr = $derived(waveforms[fn].concreteExpr(amplitude, frequency, phase, { terms }))
   let noteLabel = $derived(waveforms[fn].tonal ? `${Math.round(frequency * 440)}Hz / ${hzToNoteName(frequency * 440)}` : '')
 
   function resetParams() {
@@ -63,7 +63,7 @@
   <h1>Wave Surfer</h1>
   <select bind:value={fn}>
     {#each Object.keys(waveforms) as key}
-      <option value={key}>{waveforms[key].name}</option>
+      <option value={key}>{waveforms[key].name}: {waveforms[key].expr}</option>
     {/each}
   </select>
   <p>f(x) = {displayExpr}</p>
