@@ -6,16 +6,15 @@
   const functionPlot = (fp as any).default?.default ?? (fp as any).default ?? fp
 
   const player = new AudioPlayer()
-  let playing = $state(false)
+  const defaultParams = { amplitude: 1, freqSlider: 50, phase: 0, terms: 1 }
 
   let fn = $state('sin')
-  let terms = $state(1)
-  let activeFn = $derived((x: number) => waveforms[fn].fn(x, { terms }))
-  const defaultParams = { amplitude: 1, freqSlider: 50, phase: 0 }
+  let playing = $state(false)
   let amplitude = $state(defaultParams.amplitude)
   let freqSlider = $state(defaultParams.freqSlider)
   let frequency = $derived(0.25 * Math.pow(16, freqSlider / 100))
   let phase = $state(defaultParams.phase)
+  let terms = $state(defaultParams.terms)
   let container: HTMLDivElement
 
   let displayExpr = $derived(
@@ -28,6 +27,7 @@
     amplitude = defaultParams.amplitude
     freqSlider = defaultParams.freqSlider
     phase = defaultParams.phase
+    terms = defaultParams.terms
   }
 
   async function togglePlay() {
@@ -43,7 +43,7 @@
   }
 
   $effect(() => {
-    const segments = sampleSegments(activeFn, amplitude, frequency, phase)
+    const segments = sampleSegments((x) => waveforms[fn].fn(x, { terms }), amplitude, frequency, phase)
     functionPlot({
       target: container,
       xAxis: { domain: [-10, 10] },
