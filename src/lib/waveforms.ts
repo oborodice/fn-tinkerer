@@ -17,6 +17,9 @@ export const waveforms: Record<string, Waveform> = {
   sin: { name: 'sin', fn: Math.sin, expr: (x) => `sin(${x})`, tonal: true },
   cos: { name: 'cos', fn: Math.cos, expr: (x) => `cos(${x})`, tonal: true },
   tan: { name: 'tan', fn: Math.tan, expr: (x) => `tan(${x})`, tonal: false },
+  sec: { name: 'sec', fn: (x) => 1 / Math.cos(x), expr: (x) => `1/cos(${x})`, tonal: false },
+  csc: { name: 'csc', fn: (x) => 1 / Math.sin(x), expr: (x) => `1/sin(${x})`, tonal: false },
+  cot: { name: 'cot', fn: (x) => 1 / Math.tan(x), expr: (x) => `1/tan(${x})`, tonal: false },
   square: {
     name: 'square',
     fn: (x) => Math.sign(Math.sin(x)),
@@ -113,6 +116,11 @@ export function sampleSegments(
   for (let i = 0; i <= steps; i++) {
     const x = xMin + i * step
     const y = amplitude * fn(frequency * x + phase)
+    if (!isFinite(y)) {
+      segments.push([])
+      prevY = NaN
+      continue
+    }
     if ((prevY > discontinuityThreshold && y < -discontinuityThreshold) || (prevY < -discontinuityThreshold && y > discontinuityThreshold)) {
       segments.push([])
     }
